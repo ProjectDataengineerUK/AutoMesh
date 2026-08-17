@@ -1,0 +1,39 @@
+apiVersion: v3.1.0-lite
+kind: DataContract
+metadata:
+  name: pdf_contracts
+  version: 1
+  description: "Schema de referência para PDFs/contratos simulados — sem parser/OCR nesta fase"
+  owner: automesh-project
+  domain: documents
+  classification: confidential
+
+schema:
+  type: batch_file
+  path_pattern: "data/raw/pdf_contracts/{ds}/"
+  columns:
+    - name: document_id
+      type: string
+      required: true
+    - name: source_path
+      type: string
+      required: true
+    - name: contract_type
+      type: string
+      required: true
+    - name: uploaded_at
+      type: timestamp
+      required: true
+
+quality:
+  freshness:
+    maxStaleness: P1D
+  completeness:
+    document_id: 1.0
+
+evolution:
+  compatibility: additive-only
+
+consumers:
+  - name: fase4_rag_engine
+    usage: "Parser/OCR e indexação (fora de escopo desta fase — ver Fase 4)"

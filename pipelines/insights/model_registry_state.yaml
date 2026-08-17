@@ -1,0 +1,7 @@
+# Estado versionado do modelo em produção (alias `champion` no MLflow Registry).
+# Promoção de um novo modelo é sempre feita via PR editando este arquivo — nunca automática.
+# Ver DESIGN_FASE3_INSIGHTS_FINOPS.md, Decision 3.
+model_name: main.insights.market_outlier_detector
+champion_version: null
+promoted_at: null
+promoted_by: null

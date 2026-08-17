@@ -1,0 +1,45 @@
+apiVersion: v3.1.0-lite
+kind: DataContract
+metadata:
+  name: sharepoint_documents
+  version: 1
+  description: "Chunks de documentos do SharePoint corporativo via Microsoft Graph delta query"
+  owner: automesh-project
+  domain: rag
+  classification: internal
+
+schema:
+  type: batch_file
+  path_pattern: "Graph delta query — sites/{site_id}/drives/{drive_id}/root/delta"
+  columns:
+    - name: document_id
+      type: string
+      required: true
+    - name: source_path
+      type: string
+      required: true
+    - name: chunk_index
+      type: long
+      required: true
+    - name: chunk_text
+      type: string
+      required: true
+    - name: updated_at
+      type: timestamp
+      required: true
+
+quality:
+  freshness:
+    maxStaleness: PT30M
+  completeness:
+    document_id: 1.0
+    chunk_text: 1.0
+
+evolution:
+  compatibility: additive-only
+
+consumers:
+  - name: fase4_vector_index
+    usage: "Fonte do Delta Sync Index (Databricks Vector Search)"
+  - name: fase2_self_healing
+    usage: "Leitura da DLQ para correção de contrato (reaproveitado, zero mudança)"

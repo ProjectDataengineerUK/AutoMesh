@@ -1,0 +1,9 @@
+version: 1
+name: decision_ledger
+schema:
+  columns:
+    - {name: decision_id, type: string, required: true}
+    - {name: correlation_id, type: string, required: true}
+    - {name: action_type, type: string, required: true}
+    - {name: status, type: string, required: true}
+    - {name: expires_at, type: timestamp, required: true}

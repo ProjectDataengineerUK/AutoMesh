@@ -1,0 +1,11 @@
+schema_version: 1
+delivery:
+  max_attempts: 3
+  lease_seconds: 120
+  decision_ttl_hours: 24
+  teams_primary: true
+  outlook_fallback: true
+authorization:
+  review_pr: [automesh-code-reviewers]
+  promote_model: [automesh-ml-approvers]
+  ack_finops: [automesh-finops]

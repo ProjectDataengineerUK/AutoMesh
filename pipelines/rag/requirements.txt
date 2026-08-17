@@ -1,0 +1,15 @@
+apache-airflow==3.0.*
+msal>=1.31
+requests>=2.32
+pypdf>=5.0
+databricks-vectorsearch>=0.42
+anthropic>=0.40
+ragas>=0.2
+langchain-anthropic>=0.3
+datasets>=3.0
+nemoguardrails>=0.11
+deltalake==1.*
+pyarrow>=17.0
+pyyaml>=6.0
+pytest>=8.0
+ruff>=0.6

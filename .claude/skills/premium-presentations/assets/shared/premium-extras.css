@@ -1,0 +1,994 @@
+/* Premium Presentations — extras: runtime chrome beyond core deck layout
+   (curtain, PDF export, embed mode, speaker timer, presenter popup UI,
+   clicker status, TTS, search). */
+body.curtain::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000;
+  pointer-events: none;
+  animation: premium-curtain-in 0.3s ease;
+}
+body.curtain.curtain--message::before {
+  content: attr(data-curtain-message);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.7);
+  font-family: var(--font-display, serif);
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-style: italic;
+  background: #000;
+}
+@keyframes premium-curtain-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  body.curtain::before { animation: none; }
+}
+
+/* PDF export — opt-in via ?print-pdf query OR body.print-pdf class */
+body.print-pdf {
+  overflow: visible !important;
+  height: auto !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+body.print-pdf::after {
+  display: none !important;
+}
+body.print-pdf .deck {
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+  scroll-snap-type: none !important;
+  width: 1280px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body.print-pdf .slide {
+  width: 1280px !important;
+  height: 720px !important;
+  max-height: 720px !important;
+  overflow: hidden !important;
+  page-break-after: always !important;
+  break-after: page !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+  opacity: 1 !important;
+  transform: none !important;
+  scroll-snap-align: none !important;
+  position: relative !important;
+  display: block !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+body.print-pdf .slide:last-child {
+  break-after: auto !important;
+  page-break-after: auto !important;
+}
+body.print-pdf .slide .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+body.print-pdf .deck-dots,
+body.print-pdf .deck-progress,
+body.print-pdf .deck-hints,
+body.print-pdf .deck-counter,
+body.print-pdf .premium-controls-shell,
+body.print-pdf .premium-bg-3d,
+body.print-pdf .premium-timer,
+body.print-pdf .premium-clicker-status,
+body.print-pdf .premium-search-overlay,
+body.print-pdf .premium-presenter-overlay,
+body.print-pdf .premium-tts-cursor {
+  display: none !important;
+}
+body.print-pdf .premium-3d-toast {
+  display: none !important;
+}
+/* 3D modes flatten for export — frame descendants only (slide chrome like the
+   corner number's translateY(-50%) lives OUTSIDE .slide-3d-frame and keeps
+   its positioning transform). */
+body.print-pdf .slide-3d-frame,
+body.print-pdf .slide-3d-frame * {
+  transform: none !important;
+}
+body.print-pdf .premium-bg-3d__canvas {
+  transform: none !important;
+}
+@media print {
+  @page { size: 13.333in 7.5in; margin: 0; }
+  html, body {
+    background: var(--bg) !important;
+    color: var(--text) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body.print-pdf {
+    overflow: visible !important;
+    height: auto !important;
+  }
+  body.print-pdf::after {
+    display: none !important;
+  }
+  body.print-pdf .slide {
+    opacity: 1 !important;
+    transform: none !important;
+    background: var(--bg) !important;
+    color: var(--text) !important;
+  }
+  body.print-pdf .slide .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  body.print-pdf .deck-dots,
+  body.print-pdf .deck-progress,
+  body.print-pdf .deck-hints,
+  body.print-pdf .deck-counter,
+  body.print-pdf .premium-controls-shell,
+  body.print-pdf .premium-bg-3d,
+  body.print-pdf .premium-timer,
+  body.print-pdf .premium-clicker-status,
+  body.print-pdf .premium-search-overlay,
+  body.print-pdf .premium-presenter-overlay,
+  body.print-pdf .premium-tts-cursor,
+  body.print-pdf .premium-3d-toast {
+    display: none !important;
+  }
+  /* Flatten 3D even when body.print-pdf is absent (raw Cmd+P). */
+  html[data-3d] .slide-3d-frame,
+  html[data-3d] .slide-3d-frame *,
+  html[data-3d] .premium-bg-3d__canvas {
+    transform: none !important;
+  }
+  html[data-3d="depth"] .slide { perspective: none !important; }
+  html[data-3d] .premium-3d-toast { display: none !important; }
+}
+
+/* Embed mode — active when ?embedded=1 or inside iframe */
+html[data-embedded="true"] .deck-dots,
+html[data-embedded="true"] .deck-progress,
+html[data-embedded="true"] .deck-hints,
+html[data-embedded="true"] .deck-counter,
+html[data-embedded="true"] .premium-controls-shell,
+html[data-embedded="true"] .premium-timer,
+html[data-embedded="true"] .premium-bg-3d {
+  display: none !important;
+}
+
+/* Presenter view — transient opening state. Only the timer + 3D bg are
+   hidden; controls/dots/hints remain so the presenter can act if the
+   popup doesn't appear. Set on auto-open until presenter.ready arrives. */
+html[data-presenter-opening="true"] .premium-timer,
+html[data-presenter-opening="true"] .premium-bg-3d {
+  display: none !important;
+}
+
+/* Presenter view — full state. Deck becomes a clean audience mirror:
+   passive chrome is hidden, but keyboard controls remain available. */
+html[data-presenter-display="on"] .deck-dots,
+html[data-presenter-display="on"] .deck-progress,
+html[data-presenter-display="on"] .deck-hints,
+html[data-presenter-display="on"] .deck-counter,
+html[data-presenter-display="on"] .premium-timer {
+  display: none !important;
+}
+html[data-presenter-display="on"] .slide {
+  pointer-events: none !important;
+}
+
+/* Speaker timer — fixed bottom-right pill, click to start/pause */
+.premium-timer {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 10px 16px;
+  min-width: 96px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 14px;
+  line-height: 1.1;
+  color: var(--text, #eaedf2);
+  background: var(--surface2, rgba(20, 20, 25, 0.92));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  user-select: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  /* Auto-hide by default; flash on slidechange; stay visible while running
+     or in an urgent state. Pointer-events disabled when hidden. */
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.premium-timer[data-hidden="false"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.premium-timer[data-hidden="false"]:hover { transform: translateY(-1px); }
+.premium-timer[data-hidden="false"]:active { transform: translateY(0); }
+.premium-timer__time {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.premium-timer__pace {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim, #6e7a8c);
+}
+.premium-timer[data-state="amber"]  { border-color: rgba(255, 193, 7, 0.45); }
+.premium-timer[data-state="red"]    { border-color: rgba(244, 67, 54, 0.55); }
+.premium-timer[data-state="critical"] {
+  background: rgba(220, 38, 38, 0.92);
+  color: #fff;
+  animation: premium-timer-pulse 1.2s ease-in-out infinite;
+}
+.premium-timer[data-state="critical"] .premium-timer__pace { color: rgba(255, 255, 255, 0.85); }
+@keyframes premium-timer-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .premium-timer[data-state="critical"] { animation: none; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Presenter view — popup window
+ * Fixed light theme. The popup is an instrument panel, not content.
+ * ────────────────────────────────────────────────────────────────────────── */
+body.premium-presenter-popup {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: #f5f5f4;
+  color: #1c1917;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hide deck chrome from the popup — the popup is an instrument, not a mirror.
+   #deck / .slide stay rendered so the popup can clone them for previews.
+   Do NOT hide .slide-3d-frame — previews clone the live slide. */
+body.premium-presenter-popup .deck-progress,
+body.premium-presenter-popup .deck-counter,
+body.premium-presenter-popup .deck-hints,
+body.premium-presenter-popup .deck-dots,
+body.premium-presenter-popup .premium-controls-shell,
+body.premium-presenter-popup .premium-timer,
+body.premium-presenter-popup .premium-bg-3d,
+body.premium-presenter-popup .premium-3d-toast,
+body.premium-presenter-popup .premium-clicker-status,
+body.premium-presenter-popup .premium-search-overlay,
+body.premium-presenter-popup .premium-tts-cursor {
+  display: none !important;
+}
+/* Catch-all: deck-specific body chrome (glossary popups, custom overlays, …)
+   can't be enumerated — hide every body child except the presenter root and
+   #deck (kept offscreen for preview cloning). */
+body.premium-presenter-popup > :not(.premium-presenter):not(#deck):not(script):not(style):not(link) {
+  display: none !important;
+}
+/* Make #deck invisible but still in DOM so previews can clone slides. */
+body.premium-presenter-popup #deck {
+  position: fixed !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+/* Flatten 3D transforms inside preview clones so they don't break scale(). */
+.pp-preview .slide-3d-frame,
+.pp-preview .slide-3d-frame * {
+  transform: none !important;
+  perspective: none !important;
+}
+
+.premium-presenter {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto auto auto;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "top"
+    "instrument"
+    "timeline"
+    "timer-bar"
+    "timer-settings"
+    "status";
+  height: 100vh;
+  width: 100vw;
+  padding: 12px;
+  gap: 8px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── top bar ──────────────────────────────────────────────────────────────── */
+.premium-presenter__top {
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 13px;
+}
+.premium-presenter__title { font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.premium-presenter__counter { color: #57534e; white-space: nowrap; }
+.premium-presenter__mode { color: #78716c; font-size: 12px; white-space: nowrap; }
+.premium-presenter__gear {
+  font: inherit;
+  padding: 2px 7px;
+  border: 1px solid #d6d3d1;
+  border-radius: 4px;
+  background: #fafaf9;
+  color: #57534e;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+.premium-presenter__gear:hover { background: #f5f5f4; }
+
+/* ── instrument panel ─────────────────────────────────────────────────────── */
+.premium-presenter__instrument {
+  grid-area: instrument;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── previews ─────────────────────────────────────────────────────────────── */
+.pp-previews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  min-height: 0;
+}
+.pp-previews__current,
+.pp-previews__next {
+  position: relative;
+  background: #f5f5f4;
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+}
+.pp-previews__current { border-color: #1c1917; border-width: 2px; }
+/* Slide preview clones: scale to fit the preview container. */
+.pp-preview {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.pp-preview .slide {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 1280px !important;
+  height: 720px !important;
+  transform-origin: top left !important;
+  transform: scale(var(--pp-preview-scale, 0.2)) !important;
+  pointer-events: none !important;
+  /* Force visibility regardless of deck CSS (deck hides .slide without .visible). */
+  opacity: 1 !important;
+}
+/* Force .reveal children visible and static inside preview clones. */
+.pp-preview .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+/* Disable all transitions and animations on preview descendants. */
+.pp-preview * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* ── notes panel ─────────────────────────────────────────────────────────── */
+.premium-presenter__notes-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  padding: 14px 16px;
+  overflow-y: auto;
+  min-height: 0;
+}
+.premium-presenter__next-label,
+.premium-presenter__notes-label {
+  margin: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #78716c;
+  font-weight: 600;
+}
+.premium-presenter__next-title {
+  margin: 0 0 8px;
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: #1c1917;
+}
+.premium-presenter__notes-body {
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-y: auto;
+  color: #292524;
+  flex: 1;
+}
+.premium-presenter__notes-body p { margin: 0 0 0.7em; }
+.premium-presenter__notes-body ul,
+.premium-presenter__notes-body ol { padding-left: 1.4em; margin: 0 0 0.7em; }
+.premium-presenter__notes-body .pp-summary__lead {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1c1917;
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+.premium-presenter__notes-body .pp-summary__quote {
+  border: 1px solid #d6d3d1;
+  border-radius: 6px;
+  padding: 4px 0 4px 12px;
+  margin: 0 0 10px;
+  color: #57534e;
+  font-style: italic;
+}
+.premium-presenter__notes-body .pp-summary__bullets {
+  list-style: disc;
+  padding-left: 1.4em;
+  margin: 0 0 10px;
+}
+.premium-presenter__notes-body .pp-summary__bullets li {
+  margin: 0 0 5px;
+  line-height: 1.4;
+}
+.premium-presenter__no-notes { color: #a8a29e; font-style: italic; }
+
+/* ── teleprompter / distance-reading mode (R2.4) ───────────────────────────── */
+.premium-presenter__notes-body.pp-notes--teleprompter {
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  color: #fff;
+}
+/* Reclaim the previews pane while distance-reading (optional, R2.4 SHOULD). */
+.premium-presenter-popup:has(.pp-notes--teleprompter) .pp-previews { display: none; }
+
+/* ── rail — overlay drawer ─────────────────────────────────────────────────── */
+.premium-presenter__rail {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: 280px;
+  background: #fff;
+  border-left: 1px solid #e7e5e4;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  transform: translateX(100%);
+  transition: transform 0.2s ease;
+}
+.premium-presenter__rail[data-open="true"] {
+  transform: translateX(0);
+}
+.premium-presenter__rail-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font: inherit;
+  padding: 2px 7px;
+  border: 1px solid #d6d3d1;
+  border-radius: 4px;
+  background: transparent;
+  color: #57534e;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+.premium-presenter__rail-close:hover { background: #f5f5f4; }
+.premium-presenter__rail-label {
+  margin: 0 0 8px;
+  padding-right: 28px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #78716c;
+  font-weight: 600;
+}
+.premium-presenter__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+.premium-presenter__list li {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.35;
+  cursor: pointer;
+  color: #44403c;
+  border: 1px solid transparent;
+}
+.premium-presenter__list li:hover { background: #f5f5f4; }
+.premium-presenter__list li.is-active {
+  background: #1c1917;
+  color: #fafaf9;
+  font-weight: 600;
+}
+
+/* ── presenter timeline + rehearsal telemetry ─────────────────────────────── */
+.premium-presenter__timeline {
+  grid-area: timeline;
+  min-height: 0;
+  max-height: 190px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  padding: 8px 10px;
+  overflow: hidden;
+}
+.premium-presenter__timeline-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #78716c;
+  font-weight: 600;
+}
+#pp-rehearsal-status {
+  min-width: 0;
+  color: #57534e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+.premium-presenter__timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 2px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(150px, 1fr);
+  gap: 7px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+.premium-presenter__timeline-list li {
+  min-width: 0;
+}
+.premium-presenter__timeline-list button {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 2px 8px;
+  align-items: center;
+  min-height: 46px;
+  padding: 7px 9px;
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+  background: #fafaf9;
+  color: #44403c;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.premium-presenter__timeline-list button:hover {
+  background: #f5f5f4;
+  border-color: #d6d3d1;
+}
+.pp-timeline__num {
+  grid-row: 1 / 3;
+  color: #78716c;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+}
+.pp-timeline__title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #1c1917;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.pp-timeline__meta {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #78716c;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  line-height: 1.2;
+}
+.pp-timeline__delta {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #a8a29e;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  line-height: 1.2;
+}
+.pp-timeline__delta:empty { display: none; }
+.premium-presenter__timeline-list li[data-state="current"] button {
+  background: #1c1917;
+  border-color: #1c1917;
+}
+.premium-presenter__timeline-list li[data-state="current"] .pp-timeline__num,
+.premium-presenter__timeline-list li[data-state="current"] .pp-timeline__title {
+  color: #fafaf9;
+}
+.premium-presenter__timeline-list li[data-state="current"] .pp-timeline__meta,
+.premium-presenter__timeline-list li[data-state="current"] .pp-timeline__delta {
+  color: #d6d3d1;
+}
+.premium-presenter__timeline-list li[data-state="past"] button {
+  background: #f5f5f4;
+}
+.premium-presenter__timeline-list li[data-rehearsal="active"] button {
+  box-shadow: inset 0 -3px 0 #16a34a;
+}
+.premium-presenter__timeline-list li[data-rehearsal="visited"]:not([data-state="current"]) button {
+  box-shadow: inset 0 -3px 0 #ca8a04;
+}
+
+/* ── suggested-budget block (R1.4/R1.5, ADR-5) ────────────────────────────── */
+.premium-presenter__budgets {
+  min-width: 0;
+  border-top: 1px solid #e7e5e4;
+  padding-top: 6px;
+  overflow: hidden;
+}
+.pp-budget__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #78716c;
+  font-weight: 600;
+}
+.pp-budget__copy {
+  border: 1px solid #d6d3d1;
+  border-radius: 6px;
+  background: #fafaf9;
+  color: #44403c;
+  font: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+.pp-budget__copy:hover {
+  background: #f5f5f4;
+  border-color: #a8a29e;
+}
+.premium-presenter__budgets pre {
+  margin: 4px 0 0;
+  max-height: 72px;
+  overflow: auto;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  line-height: 1.4;
+  color: #44403c;
+  white-space: pre;
+}
+.premium-presenter__budgets[data-empty="true"] pre {
+  color: #a8a29e;
+  font-style: italic;
+  white-space: normal;
+}
+
+/* ── timer bar ─────────────────────────────────────────────────────────────── */
+.premium-presenter__timer-bar {
+  grid-area: timer-bar;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+.premium-presenter__timer-time {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1c1917;
+  line-height: 1.1;
+  min-width: 72px;
+}
+.premium-presenter__timer-pace {
+  font-size: 11px;
+  color: #78716c;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex: 1;
+}
+.pp-timer-btn {
+  font: inherit;
+  padding: 4px 10px;
+  border: 1px solid #d6d3d1;
+  border-radius: 4px;
+  background: #fafaf9;
+  color: #1c1917;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.pp-timer-btn:hover { background: #f5f5f4; }
+.premium-presenter__timer-bar.is-bell { animation: pp-bell 0.6s ease; }
+@keyframes pp-bell { 0%, 100% { background: #fff; } 50% { background: #fef3c7; } }
+
+/* ── timer settings disclosure ─────────────────────────────────────────────── */
+.premium-presenter__timer-settings[hidden] {
+  display: none !important;
+}
+.premium-presenter__timer-settings {
+  grid-area: timer-settings;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  background: #fafaf9;
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+}
+.premium-presenter__timer-settings label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #44403c;
+}
+.premium-presenter__timer-settings input,
+.premium-presenter__timer-settings select {
+  font: inherit;
+  padding: 2px 6px;
+  border: 1px solid #d6d3d1;
+  border-radius: 4px;
+  background: #fff;
+  color: #1c1917;
+}
+.premium-presenter__timer-settings input[type="number"] { width: 68px; }
+.premium-presenter__timer-settings input[type="time"] { width: 88px; }
+
+/* ── status footer ─────────────────────────────────────────────────────────── */
+.premium-presenter__status {
+  grid-area: status;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  color: #57534e;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 8px;
+}
+.pp-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a8a29e;
+  flex-shrink: 0;
+}
+.pp-status__dot[data-state="connected"],
+.pp-status__dot[data-state="connected-focused"] {
+  background: #16a34a;
+}
+.pp-status__dot[data-state="connected"] {
+  background: #ca8a04;
+}
+#pp-status-session { color: #a8a29e; margin-left: auto; }
+
+/* ── diag bar ─────────────────────────────────────────────────────────────── */
+.premium-presenter__diag {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  background: #1c1917;
+  color: #fafaf9;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-top: 1px solid #44403c;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Fallback prompt — shown when window.open() is blocked.
+ * Strictly: no notes, no jump list, no timer. Just a small corner alert.
+ * ────────────────────────────────────────────────────────────────────────── */
+.premium-presenter-fallback {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  color: #78350f;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+.premium-presenter-fallback__icon { font-size: 16px; }
+.premium-presenter-fallback__btn {
+  font: inherit;
+  padding: 4px 10px;
+  border: 1px solid #78350f;
+  border-radius: 4px;
+  background: transparent;
+  color: #78350f;
+  cursor: pointer;
+}
+.premium-presenter-fallback__btn:hover { background: #78350f; color: #fef3c7; }
+
+/* Clicker status toast (created by premium-clicker.js) */
+.premium-clicker-status {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, 8px);
+  z-index: 1000;
+  padding: 8px 14px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  color: var(--text, #eaedf2);
+  background: var(--surface2, rgba(20, 20, 25, 0.92));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.premium-clicker-status.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Glossary — term links + definition popup
+ * Used with premium-glossary.js (conditional module).
+ * Theme-aware via CSS custom properties.
+ * ────────────────────────────────────────────────────────────────────────── */
+.term-link {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, var(--accent, #d4a843) 70%, transparent);
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.16em;
+}
+.term-link:hover,
+.term-link:focus-visible {
+  color: var(--accent, #d4a843);
+  text-decoration-style: solid;
+  outline: none;
+}
+.term-link--gold { color: var(--accent, #d4a843); }
+.term-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: none;
+}
+.term-popup.is-open { display: block; }
+.term-popup__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: rgba(8, 8, 12, 0.62);
+  backdrop-filter: blur(3px);
+  cursor: pointer;
+}
+.term-popup__card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(520px, calc(100vw - 48px));
+  background: var(--surface, #16161c);
+  color: var(--text, #f4f1ea);
+  border: 1px solid color-mix(in srgb, var(--accent, #d4a843) 35%, transparent);
+  border-radius: 14px;
+  padding: 26px 30px 20px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+.term-popup__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  appearance: none;
+  background: none;
+  border: 0;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 6px;
+}
+.term-popup__close:hover { opacity: 1; }
+.term-popup__title {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+  line-height: 1.3;
+  color: var(--accent, #d4a843);
+}
+.term-popup__body {
+  margin: 0 0 14px;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+.term-popup__hint {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.45;
+}

@@ -1,0 +1,13 @@
+.env
+*.tfvars
+__pycache__/
+.venv/
+node_modules/
+.pytest_cache/
+.test-tmp/
+data/
+.airflow_local/
+mlruns/
+*.db
+*.db-shm
+*.db-wal

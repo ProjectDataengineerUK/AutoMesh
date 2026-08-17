@@ -1,0 +1,213 @@
+# Local development/testing stack for the Fase 1 (Ingestão) pipeline.
+# Adapted from the official Apache Airflow 3.0.0 docker-compose reference
+# (https://airflow.apache.org/docs/apache-airflow/3.0.0/docker-compose.yaml):
+# CeleryExecutor + Redis replaced with LocalExecutor, and a Redpanda broker
+# (Kafka-API compatible) added in place of a managed Kafka cluster.
+#
+# WARNING: local development only. The Design's target environment is a
+# cloud trial account (Confluent Cloud / Astronomer / Databricks trial) —
+# this stack exists to validate the DAGs and producers before that account
+# is provisioned. See BUILD_REPORT_FASE1_INGESTAO.md, section "Blockers".
+#
+# Usage:
+#   docker compose -f docker-compose.local.yml up -d
+#   docker compose -f docker-compose.local.yml exec airflow-apiserver airflow dags list
+#   docker compose -f docker-compose.local.yml down -v
+---
+x-airflow-common:
+  &airflow-common
+  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.0.0}
+  environment:
+    &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-apache-airflow-providers-apache-kafka apache-airflow-providers-databricks confluent-kafka deltalake pyarrow pyyaml requests anthropic mlflow scikit-learn scipy pandas databricks-sdk msal}
+    AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
+    PYTHONPATH: /opt/airflow
+    KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+    BRONZE_BASE_PATH: /opt/airflow/data/bronze
+    DLQ_TABLE_PATH: /opt/airflow/data/bronze/_dlq/bronze_dlq
+    SELF_HEALING_CHECKPOINT_PATH: /opt/airflow/data/self_healing/self_healing_checkpoint
+    SELF_HEALING_EVENTS_PATH: /opt/airflow/data/self_healing/self_healing_events
+    SELF_HEALING_REJECTIONS_PATH: /opt/airflow/data/self_healing/self_healing_rejections
+    DATABRICKS_JOB_ID: '0'
+    GITHUB_REPO: 'local/unset'
+    SILVER_BASE_PATH: /opt/airflow/data/silver
+    GOLD_INSIGHTS_PATH: /opt/airflow/data/gold/market_insights
+    MLFLOW_TRACKING_URI: sqlite:////opt/airflow/data/mlflow/mlflow.db
+    MLFLOW_MODEL_NAME: main.insights.market_outlier_detector
+    DELIVERY_STATE_PATH: /opt/airflow/data/delivery/delivery.db
+    DELIVERY_REVIEW_RECIPIENT: ${DELIVERY_REVIEW_RECIPIENT:-}
+  volumes:
+    - ./pipelines/ingestion/dags:/opt/airflow/dags/ingestion
+    - ./pipelines/processing/dags:/opt/airflow/dags/processing
+    - ./pipelines/self_healing/dags:/opt/airflow/dags/self_healing
+    - ./pipelines/insights/dags:/opt/airflow/dags/insights
+    - ./pipelines/finops/dags:/opt/airflow/dags/finops
+    - ./pipelines/delivery/dags:/opt/airflow/dags/delivery
+    - ./pipelines:/opt/airflow/pipelines
+    - ./.airflow_local/logs:/opt/airflow/logs
+    - ./.airflow_local/config:/opt/airflow/config
+    - ./.airflow_local/plugins:/opt/airflow/plugins
+    - ./data:/opt/airflow/data
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on:
+    &airflow-common-depends-on
+    postgres:
+      condition: service_healthy
+    redpanda:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+
+  redpanda:
+    image: redpandadata/redpanda:latest
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --overprovisioned
+      - --node-id=0
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092
+      - --check=false
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health", "--exit-when-healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: always
+
+  airflow-apiserver:
+    <<: *airflow-common
+    command: api-server
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/api/v2/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-dag-processor:
+    <<: *airflow-common
+    command: dag-processor
+    healthcheck:
+      test: ["CMD-SHELL", 'airflow jobs check --job-type DagProcessorJob --hostname "$${HOSTNAME}"']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-triggerer:
+    <<: *airflow-common
+    command: triggerer
+    healthcheck:
+      test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        mkdir -v -p /opt/airflow/{logs,dags,plugins,config}
+        /entrypoint airflow version
+        /entrypoint airflow config list >/dev/null
+        chown -R "${AIRFLOW_UID:-50000}:0" /opt/airflow/{logs,plugins,config}
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+      _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
+      _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
+      _PIP_ADDITIONAL_REQUIREMENTS: ''
+    user: "0:0"
+
+  airflow-connections:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow connections add 'kafka_default' \
+          --conn-json '{"conn_type": "kafka", "extra": {"bootstrap.servers": "redpanda:9092", "group.id": "automesh-fase1-ingestion"}}' \
+          || echo "kafka_default already exists, skipping"
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-cli:
+    <<: *airflow-common
+    profiles:
+      - debug
+    environment:
+      <<: *airflow-common-env
+      CONNECTION_CHECK_MAX_COUNT: "0"
+    command:
+      - bash
+      - -c
+      - airflow
+    depends_on:
+      <<: *airflow-common-depends-on
+
+volumes:
+  postgres-db-volume:

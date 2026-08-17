@@ -1,0 +1,42 @@
+apiVersion: v3.1.0-lite
+kind: DataContract
+metadata:
+  name: usage_logs
+  version: 1
+  description: "Logs sintéticos de uso/acesso à plataforma"
+  owner: automesh-project
+  domain: infra
+  classification: internal
+
+schema:
+  type: kafka_topic
+  topic: automesh.infra.usage_logs.v1
+  columns:
+    - name: user_id
+      type: string
+      required: true
+    - name: action
+      type: string
+      required: true
+    - name: resource
+      type: string
+      required: true
+    - name: occurred_at
+      type: timestamp
+      required: true
+
+quality:
+  freshness:
+    maxStaleness: PT15M
+  completeness:
+    user_id: 1.0
+    action: 1.0
+
+evolution:
+  compatibility: additive-only
+
+consumers:
+  - name: fase1_bronze_writer
+    usage: "Promoção ao Bronze após validação"
+  - name: fase3_finops_agent
+    usage: "Consumo futuro para observabilidade (fora de escopo desta fase)"

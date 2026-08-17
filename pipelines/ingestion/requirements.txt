@@ -1,0 +1,9 @@
+apache-airflow==3.0.*
+apache-airflow-providers-apache-kafka
+confluent-kafka==2.*
+deltalake==1.*
+pyarrow>=17.0
+pyyaml>=6.0
+requests>=2.32
+pytest>=8.0
+ruff>=0.6

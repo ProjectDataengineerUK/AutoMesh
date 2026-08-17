@@ -1,0 +1,8 @@
+version: 1
+name: action_applications
+schema:
+  columns:
+    - {name: application_id, type: string, required: true}
+    - {name: decision_id, type: string, required: true}
+    - {name: action_type, type: string, required: true}
+    - {name: status, type: string, required: true}

@@ -1,0 +1,26 @@
+# Tunáveis da Fase 4 (RAG + fábrica de conteúdo).
+# Todos os valores aqui têm um override via variável de ambiente equivalente
+# (ver DESIGN_FASE4_RAG_CONTEUDO.md, seção Configuration) — este arquivo é a
+# documentação canônica dos defaults, não é lido diretamente pelo código.
+retrieval:
+  candidates: 10
+  rerank_top_n: 4
+
+chunking:
+  chunk_size: 1000
+  chunk_overlap: 200
+
+ragas:
+  faithfulness_threshold: 0.7
+  answer_relevancy_threshold: 0.7
+
+vector_search:
+  endpoint_name: automesh-rag-endpoint
+  index_name: main.rag.sharepoint_documents_index
+  embedding_model: databricks-bge-large-en
+
+sharepoint:
+  polling_schedule: "*/30 * * * *"
+
+content_factory:
+  schedule: "@hourly"

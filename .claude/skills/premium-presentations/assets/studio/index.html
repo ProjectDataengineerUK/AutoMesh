@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="editorial" data-parallax="off" data-3d="off">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Presentations: Studio</title>
+<link rel="stylesheet" href="../shared/premium-themes.css">
+<link rel="stylesheet" href="../shared/premium-components.css">
+<link rel="stylesheet" href="../shared/premium-design-power.css">
+<link rel="stylesheet" href="../shared/premium-annotations.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+  }
+  .studio-shell {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: 100dvh;
+  }
+  .studio-rail {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface), var(--bg) 34%);
+  }
+  .studio-rail h1 {
+    margin: 0 0 18px;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    line-height: 1.05;
+  }
+  .studio-rail nav {
+    display: grid;
+    gap: 8px;
+  }
+  .studio-rail a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.88rem;
+  }
+  .studio-rail a:hover { color: var(--text); }
+  .studio-main {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+  }
+  .studio-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .studio-topbar h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    line-height: 1;
+  }
+  .preview-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .preview-links a,
+  button {
+    min-height: 34px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    padding: 7px 11px;
+    font: inherit;
+    text-decoration: none;
+  }
+  button { cursor: pointer; }
+  button:hover,
+  .preview-links a:hover { border-color: var(--border-bright); }
+  .lab-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .lab-panel {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    min-height: 280px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--surface), transparent 12%);
+  }
+  .lab-panel--wide { grid-column: 1 / -1; }
+  .lab-panel h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+  }
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  label {
+    display: grid;
+    gap: 5px;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+    color: var(--text);
+    padding: 8px 10px;
+    font: inherit;
+  }
+  input[type="color"] {
+    padding: 3px;
+  }
+  textarea,
+  pre {
+    min-height: 120px;
+    margin: 0;
+    overflow: auto;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .preview-pane {
+    min-height: 160px;
+    padding: 14px;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--bg), var(--surface) 38%);
+  }
+  .motion-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  @media (max-width: 900px) {
+    .studio-shell { grid-template-columns: 1fr; }
+    .studio-rail {
+      position: relative;
+      height: auto;
+      border-right: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .lab-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="studio-shell" id="design-power-studio">
+  <aside class="studio-rail">
+    <h1>Premium Presentations</h1>
+    <nav>
+      <a href="#theme-composer">Theme Composer</a>
+      <a href="#component-playground">Component Playground</a>
+      <a href="#layout-variants">Layout Variants</a>
+      <a href="#density-checker">Density Checker</a>
+      <a href="#motion-profiles">Motion Profiles</a>
+      <a href="#data-visualization">Data Visualization</a>
+      <a href="#visual-assets">Visual Assets</a>
+    </nav>
+  </aside>
+
+  <main class="studio-main">
+    <header class="studio-topbar">
+      <h2>Design Lab</h2>
+      <div class="preview-links">
+        <a href="../templates/preview-design-power.html">Design Power</a>
+        <a href="../templates/preview-editorial.html">Editorial</a>
+        <a href="../templates/preview-warm.html">Warm</a>
+        <a href="../templates/preview-cupertino.html">Cupertino</a>
+        <a href="../templates/preview-red.html">Red</a>
+      </div>
+    </header>
+
+    <section class="lab-grid">
+      <section class="lab-panel" id="theme-composer">
+        <h3>Theme Composer</h3>
+        <div class="field-grid">
+          <label>Theme id<input id="theme-id" value="studio-focus"></label>
+          <label>Background<input id="theme-bg" type="color" value="#101820"></label>
+          <label>Text<input id="theme-text" type="color" value="#f7fafc"></label>
+          <label>Accent<input id="theme-accent" type="color" value="#4a9eff"></label>
+          <label>Surface<input id="theme-surface" type="color" value="#182838"></label>
+        </div>
+        <textarea id="theme-css-output" spellcheck="false"></textarea>
+      </section>
+
+      <section class="lab-panel" id="component-playground">
+        <h3>Component Playground</h3>
+        <label>Component
+          <select id="component-kind">
+            <option value="checklist">Checklist</option>
+            <option value="stats">Stats</option>
+            <option value="compare">Compare</option>
+            <option value="timeline">Timeline</option>
+            <option value="code">Code</option>
+          </select>
+        </label>
+        <div class="preview-pane" id="component-preview"></div>
+        <textarea id="component-code" spellcheck="false"></textarea>
+      </section>
+
+      <section class="lab-panel" id="layout-variants">
+        <h3>Slide Layout Variants</h3>
+        <label>Layout
+          <select id="layout-kind">
+            <option value="decision-matrix">Decision Matrix</option>
+            <option value="executive-summary">Executive Summary</option>
+            <option value="evidence-wall">Evidence Wall</option>
+            <option value="process-ladder">Process Ladder</option>
+            <option value="before-after">Before / After</option>
+            <option value="architecture-map">Architecture Map</option>
+            <option value="case-study">Case Study</option>
+            <option value="quote-proof">Quote Proof</option>
+            <option value="split-argument">Split Argument</option>
+            <option value="teardown">Teardown</option>
+          </select>
+        </label>
+        <div class="preview-pane" id="layout-preview"></div>
+        <textarea id="layout-code" spellcheck="false"></textarea>
+      </section>
+
+      <section class="lab-panel" id="density-checker">
+        <h3>Visual Density Checker</h3>
+        <textarea id="density-html" spellcheck="false">&lt;h2&gt;Dense slide&lt;/h2&gt;&lt;p&gt;Paste slide HTML here or edit this text to inspect word count, reveal count, card count, and density warnings.&lt;/p&gt;&lt;p class="reveal"&gt;One&lt;/p&gt;&lt;p class="reveal"&gt;Two&lt;/p&gt;</textarea>
+        <pre id="density-output"></pre>
+      </section>
+
+      <section class="lab-panel" id="motion-profiles">
+        <h3>Motion Profiles</h3>
+        <div class="motion-row">
+          <button type="button" data-motion-profile-button="calm">Calm</button>
+          <button type="button" data-motion-profile-button="cinematic">Cinematic</button>
+          <button type="button" data-motion-profile-button="technical">Technical</button>
+          <button type="button" data-motion-profile-button="workshop">Workshop</button>
+          <button type="button" data-motion-profile-button="pitch">Pitch</button>
+        </div>
+        <div class="preview-pane">
+          <div class="dp-component dp-component--stats">
+            <div class="dp-metric"><strong>3D</strong><span>Profile default</span></div>
+            <div class="dp-metric"><strong>ms</strong><span>Reveal timing</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lab-panel" id="data-visualization">
+        <h3>Data Visualization</h3>
+        <label>Chart
+          <select id="viz-kind">
+            <option value="line">Line</option>
+            <option value="scatter">Scatter</option>
+            <option value="waterfall">Waterfall</option>
+            <option value="funnel">Funnel</option>
+            <option value="heatmap">Heatmap</option>
+            <option value="sankey">Sankey</option>
+            <option value="kpi-trend">KPI Trend</option>
+          </select>
+        </label>
+        <div class="preview-pane" id="viz-preview"></div>
+        <textarea id="viz-code" spellcheck="false"></textarea>
+      </section>
+
+      <section class="lab-panel lab-panel--wide" id="visual-assets">
+        <h3>Visual Asset System</h3>
+        <textarea id="asset-html" spellcheck="false">&lt;section data-visual-asset="hero" data-asset-src="data:image/webp;base64,abc"&gt;&lt;/section&gt;
+&lt;img src="./sidecar.png" alt="relative"&gt;
+&lt;img src="//example.invalid/remote.png" alt="remote"&gt;</textarea>
+        <pre id="asset-output"></pre>
+      </section>
+    </section>
+  </main>
+</div>
+
+<script src="../shared/premium-design-power.js" defer></script>
+<script src="../shared/premium-controls.js" defer></script>
+<script src="../shared/premium-annotations.js" defer></script>
+</body>
+</html>

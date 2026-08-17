@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "built_at": "2026-05-11",
+  "agentspec_version": "3.2.0",
+  "agentcode_owned": [
+    "agents/languages",
+    "agents/security",
+    "agents/legal",
+    "kb/databricks",
+    "kb/fabric",
+    "kb/governance",
+    "kb/doma-protocol",
+    "kb/semantic-modeling",
+    "kb/migration",
+    "kb/guardrails",
+    "kb/controls",
+    "kb/foundations",
+    "kb/integrations",
+    "kb/metadata",
+    "kb/operations",
+    "kb/orchestration",
+    "kb/patterns",
+    "kb/platforms",
+    "kb/snowflake",
+    "kb/legal",
+    "commands/data",
+    "commands/legal",
+    "mcp",
+    "hooks/mempalace_setup.sh",
+    "hooks/mempalace_save.sh",
+    "hooks/mempalace_precompact.sh"
+  ]
+}

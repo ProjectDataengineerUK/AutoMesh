@@ -1,0 +1,42 @@
+apiVersion: v3.1.0-lite
+kind: DataContract
+metadata:
+  name: video_transcripts
+  version: 1
+  description: "Schema de referência para transcrições de vídeo simuladas — sem parser nesta fase"
+  owner: automesh-project
+  domain: documents
+  classification: internal
+
+schema:
+  type: batch_file
+  path_pattern: "data/raw/video_transcripts/{ds}/"
+  columns:
+    - name: transcript_id
+      type: string
+      required: true
+    - name: video_source
+      type: string
+      required: true
+    - name: transcript_text
+      type: string
+      required: true
+    - name: duration_seconds
+      type: long
+      required: true
+    - name: recorded_at
+      type: timestamp
+      required: true
+
+quality:
+  freshness:
+    maxStaleness: P1D
+  completeness:
+    transcript_id: 1.0
+
+evolution:
+  compatibility: additive-only
+
+consumers:
+  - name: fase4_rag_engine
+    usage: "Parser e indexação (fora de escopo desta fase — ver Fase 4)"

@@ -1,0 +1,7 @@
+-r pipelines/ingestion/requirements.txt
+-r pipelines/processing/requirements.txt
+-r pipelines/self_healing/requirements.txt
+-r pipelines/insights/requirements.txt
+-r pipelines/finops/requirements.txt
+-r pipelines/rag/requirements.txt
+-r pipelines/delivery/requirements.txt

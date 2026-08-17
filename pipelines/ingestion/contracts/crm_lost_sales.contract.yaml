@@ -1,0 +1,47 @@
+apiVersion: v3.1.0-lite
+kind: DataContract
+metadata:
+  name: crm_lost_sales
+  version: 1
+  description: "Oportunidades de venda perdida (CRM simulado) — extração batch diária"
+  owner: automesh-project
+  domain: sales
+  classification: internal
+
+schema:
+  type: batch_file
+  path_pattern: "data/raw/crm_lost_sales/{ds}/lost_sales.json"
+  columns:
+    - name: opportunity_id
+      type: string
+      required: true
+    - name: account_name
+      type: string
+      required: true
+    - name: lost_reason
+      type: string
+      required: true
+    - name: estimated_value
+      type: decimal
+      required: true
+      constraints:
+        minimum: 0
+    - name: lost_at
+      type: timestamp
+      required: true
+
+quality:
+  freshness:
+    maxStaleness: P1D
+  completeness:
+    opportunity_id: 1.0
+    estimated_value: 1.0
+
+evolution:
+  compatibility: additive-only
+
+consumers:
+  - name: fase1_bronze_writer
+    usage: "Promoção ao Bronze após validação"
+  - name: fase3_insights_engine
+    usage: "Cruzamento com tendências de mercado (fora de escopo desta fase)"

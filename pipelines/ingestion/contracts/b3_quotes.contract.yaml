@@ -1,0 +1,44 @@
+apiVersion: v3.1.0-lite
+kind: DataContract
+metadata:
+  name: b3_quotes
+  version: 1
+  description: "Cotações de ações B3 via brapi.dev — uma linha por ticker por poll"
+  owner: automesh-project
+  domain: market
+  classification: internal
+
+schema:
+  type: kafka_topic
+  topic: automesh.market.b3_quotes.v1
+  columns:
+    - name: ticker
+      type: string
+      required: true
+    - name: price
+      type: decimal
+      required: true
+      constraints:
+        minimum: 0
+    - name: volume
+      type: long
+      required: false
+    - name: quote_timestamp
+      type: timestamp
+      required: true
+
+quality:
+  freshness:
+    maxStaleness: PT5M
+  completeness:
+    ticker: 1.0
+    price: 1.0
+
+evolution:
+  compatibility: additive-only
+
+consumers:
+  - name: fase1_bronze_writer
+    usage: "Promoção ao Bronze após validação"
+  - name: fase2_self_healing
+    usage: "Leitura da DLQ para correção de schema (futuro)"
