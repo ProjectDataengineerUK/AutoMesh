@@ -1,13 +1,87 @@
+# Environment variables and local secrets
 .env
-*.tfvars
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
 .venv/
-node_modules/
+venv/
+env/
+.python-version
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+build/
+dist/
+*.egg-info/
+
+# Tests and temporary files
 .test-tmp/
+.cache/
+tmp/
+temp/
+*.tmp
+*.log
+
+# Local data and runtime state
 data/
-.airflow_local/
 mlruns/
+.airflow_local/
+airflow.db
+airflow.cfg
+webserver_config.py
 *.db
 *.db-shm
 *.db-wal
+*.sqlite
+*.sqlite3
+checkpoints/
+
+# Terraform
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl.backup
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# JavaScript
+node_modules/
+.npm/
+.yarn/
+.pnpm-store/
+coverage/
+
+# IDE and operating system
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local tooling
+.claude/settings.local.json
+.codex/
+.agents/
