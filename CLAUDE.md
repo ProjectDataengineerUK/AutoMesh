@@ -30,7 +30,9 @@ AutoMesh/
 │           ├── FASE1_INGESTAO/      # ciclo SDD completo da Fase 1 — Shipped 2026-08-01
 │           ├── FASE2_PROCESSAMENTO_SELFHEALING/  # ciclo SDD completo da Fase 2 — Shipped 2026-08-04
 │           ├── FASE3_INSIGHTS_FINOPS/            # ciclo SDD completo da Fase 3 — Shipped 2026-08-06
-│           └── FASE4_RAG_CONTEUDO/               # ciclo SDD completo da Fase 4 — Shipped 2026-08-11
+│           ├── FASE4_RAG_CONTEUDO/               # ciclo SDD completo da Fase 4 — Shipped 2026-08-11
+│           ├── FASE5_ENTREGA_HITL/               # ciclo SDD completo da Fase 5 — Shipped 2026-08-17
+│           └── FASE6_PLATFORM_OBSERVABILITY_VALIDATION/ # ciclo SDD completo da Fase 6 — Shipped 2026-08-17
 ├── pipelines/
 │   ├── ingestion/                   # Fase 1 — Ingestão (Kafka/Airflow) — shipped, primeira fatia implementada
 │   │   ├── contracts/               # Contratos de dados YAML (ODCS-lite), um por fonte
@@ -181,4 +183,4 @@ Rodar contra a conta cloud trial de produção (Confluent Cloud + Astronomer/Dat
 ---
 
 _Gerado por `/start` em 2026-07-31._
-_Sincronizado em 2026-08-17_ — Fases 1-5 completaram o ciclo SDD. A Fase 5 adicionou outbox transacional, Teams/Outlook adapters, ledger HITL, aplicação MLflow com precondição e integração automática após PR de self-healing. Seus DAGs e o DAG integrado de self-healing importaram sem erros no Airflow 3.0 isolado; infraestrutura Microsoft 365 e Unity Catalog permanece pendente.
+_Sincronizado em 2026-08-17_ — Fases 1-6 completaram o ciclo SDD. A Fase 6 adicionou validação determinística CAP-01–CAP-10, observabilidade portável, recovery harness e quatro gates de GitHub Actions aprovados. Infraestrutura Microsoft 365, Databricks e exporters externos permanece explicitamente pendente de validação autorizada.

@@ -9,7 +9,7 @@
 | **Feature** | FASE6_PLATFORM_OBSERVABILITY_VALIDATION |
 | **Date** | 2026-08-17 |
 | **Author** | Codex + usuário |
-| **Status** | ✅ Complete (Built) |
+| **Status** | ✅ Shipped |
 | **Clarity Score** | 14/15 |
 
 ---
@@ -305,9 +305,10 @@ O BUILD não está autorizado por este documento a criar repositório remoto, re
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-08-17 | Codex + usuário | Definição inicial baseada no brainstorm e no inventário real do workspace |
+| 1.1 | 2026-08-17 | ship-agent | Shipped and archived after local and GitHub Actions gates passed |
 
 ---
 
 ## Next Step
 
-**Ready for:** `/ship .claude/sdd/features/DEFINE_FASE6_PLATFORM_OBSERVABILITY_VALIDATION.md`
+**Completed:** Shipped and archived on 2026-08-17.

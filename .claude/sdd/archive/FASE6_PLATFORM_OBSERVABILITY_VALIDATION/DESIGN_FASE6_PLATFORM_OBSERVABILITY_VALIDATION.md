@@ -8,7 +8,7 @@
 |---|---|
 | **Feature** | FASE6_PLATFORM_OBSERVABILITY_VALIDATION |
 | **Date** | 2026-08-17 |
-| **Status** | ✅ Complete (Built) |
+| **Status** | ✅ Shipped |
 | **Source** | `DEFINE_FASE6_PLATFORM_OBSERVABILITY_VALIDATION.md` |
 | **Runtime** | Python 3.11 CI; Airflow 3.0 validation image |
 
@@ -572,11 +572,12 @@ Steps 1–9 require no cloud writes. Step 10 is a separate controlled iteration.
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-08-17 | Codex + usuário | Initial platform, evidence, CI and observability design |
+| 1.1 | 2026-08-17 | ship-agent | Shipped and archived after all repository CI workflows passed |
 
 ---
 
 ## Next Step
 
-**Ready for:** `/ship .claude/sdd/features/DEFINE_FASE6_PLATFORM_OBSERVABILITY_VALIDATION.md`
+**Completed:** Shipped and archived on 2026-08-17.
 
 The first BUILD iteration covers steps 1–4 and baseline preflight. Observability runtime instrumentation and recovery harness follow incrementally so existing behavior remains stable.

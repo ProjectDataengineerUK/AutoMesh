@@ -11,7 +11,7 @@
 | **Author** | build-agent |
 | **DEFINE** | [DEFINE](../features/DEFINE_FASE6_PLATFORM_OBSERVABILITY_VALIDATION.md) |
 | **DESIGN** | [DESIGN](../features/DESIGN_FASE6_PLATFORM_OBSERVABILITY_VALIDATION.md) |
-| **Status** | Complete |
+| **Status** | ✅ Shipped |
 
 ## Summary
 
@@ -67,7 +67,7 @@ python -m pytest tests/platform tests/recovery pipelines/observability/tests -q
 
 **Status:** ✅ 22/22 Pass
 
-The complete historical pipeline suite was started but exceeded the managed Windows host's practical runtime without progress output. This matches the documented host limitation for Delta temporary directories. The Linux domain matrix is the authoritative full-suite gate.
+The complete historical pipeline suite exceeded the managed Windows host's practical runtime. The Linux domain matrix subsequently passed for every configured domain, and the dedicated Airflow 3.0 DagBag, security and validation-report workflows also passed.
 
 ## Issues Encountered
 
@@ -119,7 +119,7 @@ No blocker prevents the code build. Operational promotion still requires GitHub 
 
 ## Final Status
 
-### Overall: ✅ COMPLETE
+### Overall: ✅ SHIPPED
 
 - [x] Manifest implementation completed
 - [x] Phase 6 lint passes
@@ -131,4 +131,4 @@ No blocker prevents the code build. Operational promotion still requires GitHub 
 
 ## Next Step
 
-`/ship .claude/sdd/features/DEFINE_FASE6_PLATFORM_OBSERVABILITY_VALIDATION.md`
+Shipped and archived on 2026-08-17. GitHub Actions gates passed on commit `f4ba829`.
