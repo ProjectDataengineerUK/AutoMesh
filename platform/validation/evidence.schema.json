@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["capability_id", "gate", "status", "environment", "commit_sha", "started_at", "finished_at", "artifact_refs"],
+  "properties": {
+    "capability_id": {"pattern": "^CAP-(0[1-9]|10)$", "type": "string"},
+    "gate": {"enum": ["unit", "contract", "lint", "dagbag", "local_integration", "external_smoke", "recovery", "alert", "runbook"]},
+    "status": {"enum": ["PASS", "FAIL", "SKIP_WITH_REASON"]},
+    "reason_code": {"type": ["string", "null"]},
+    "environment": {"type": "string"},
+    "commit_sha": {"type": "string"},
+    "started_at": {"format": "date-time", "type": "string"},
+    "finished_at": {"format": "date-time", "type": "string"},
+    "expires_at": {"format": "date-time", "type": ["string", "null"]},
+    "artifact_refs": {"items": {"type": "string"}, "type": "array"}
+  }
+}

@@ -103,6 +103,16 @@ AutoMesh/
 
 ## Como rodar
 
+### Validação e observabilidade da Fase 6
+
+```bash
+python scripts/validation/run_validation.py inventory --environment local
+python scripts/validation/generate_report.py --output-dir artifacts/validation/latest
+docker compose -f docker-compose.observability.yml up -d
+```
+
+O inventário nunca inclui valores de secrets. Probes externos são opt-in e evidências expiradas, puladas ou de outro commit não promovem maturidade. O stack local expõe OTLP em `4317/4318`, Prometheus em `9090` e Grafana em `3000`.
+
 **Fases 1-5** estão implementadas; a Fase 5 (Entrega Segura + HITL) também passou por validação de DagBag no Airflow 3.0 isolado. Integrações Microsoft 365/Teams/Outlook e MLflow/Unity Catalog reais continuam pendentes de validação de infraestrutura.
 
 ```bash

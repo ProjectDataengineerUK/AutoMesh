@@ -1,0 +1,11 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "panels": [
+    {"id": 1, "title": "Pipeline results", "type": "timeseries", "targets": [{"expr": "sum(rate(automesh_records_total[5m])) by (domain, result)"}]},
+    {"id": 2, "title": "Validation failures", "type": "timeseries", "targets": [{"expr": "sum(automesh_validation_total{result=\"fail\"}) by (capability_id, reason_code)"}]}
+  ],
+  "schemaVersion": 39,
+  "tags": ["automesh", "validation"],
+  "title": "AutoMesh Sentinel"
+}

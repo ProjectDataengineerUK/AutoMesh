@@ -1,0 +1,48 @@
+capabilities:
+  - id: CAP-01
+    name: Kafka/B3 to Bronze and DLQ
+    owner: ingestion
+    required_gates: [unit, contract, lint, local_integration, recovery, alert, runbook]
+  - id: CAP-02
+    name: Bronze to Silver
+    owner: processing
+    required_gates: [unit, contract, lint, local_integration, external_smoke]
+    external_required_names: [DATABRICKS_HOST, DATABRICKS_TOKEN]
+  - id: CAP-03
+    name: Self-healing to GitHub PR
+    owner: self-healing
+    required_gates: [unit, contract, lint, local_integration, external_smoke]
+    external_required_names: [GITHUB_TOKEN, AUTOMESH_TEST_REPOSITORY]
+  - id: CAP-04
+    name: MLflow training inference and drift
+    owner: insights
+    required_gates: [unit, contract, lint, local_integration, external_smoke]
+    external_required_names: [MLFLOW_TRACKING_URI]
+  - id: CAP-05
+    name: FinOps billing and fallback
+    owner: finops
+    required_gates: [unit, contract, lint, local_integration, external_smoke]
+    external_required_names: [DATABRICKS_HOST, DATABRICKS_TOKEN]
+  - id: CAP-06
+    name: SharePoint to Bronze
+    owner: rag
+    required_gates: [unit, contract, lint, local_integration, external_smoke]
+    external_required_names: [MS_TENANT_ID, MS_CLIENT_ID, MS_CLIENT_SECRET, SHAREPOINT_TEST_SITE_ID]
+  - id: CAP-07
+    name: Vector Search retrieval and RAGAS
+    owner: rag
+    required_gates: [unit, contract, lint, local_integration, external_smoke]
+    external_required_names: [DATABRICKS_HOST, DATABRICKS_TOKEN, VECTOR_SEARCH_TEST_INDEX]
+  - id: CAP-08
+    name: Teams Outlook and HITL
+    owner: delivery
+    required_gates: [unit, contract, lint, dagbag, local_integration, external_smoke]
+    external_required_names: [MS_TENANT_ID, MS_CLIENT_ID, MS_CLIENT_SECRET, TEAMS_TEST_RECIPIENT]
+  - id: CAP-09
+    name: CI DagBag and quality gates
+    owner: platform
+    required_gates: [unit, contract, lint, dagbag, local_integration, recovery, alert, runbook]
+  - id: CAP-10
+    name: Observability and recovery
+    owner: platform
+    required_gates: [unit, contract, lint, local_integration, recovery, alert, runbook]

@@ -5,3 +5,5 @@
 -r pipelines/finops/requirements.txt
 -r pipelines/rag/requirements.txt
 -r pipelines/delivery/requirements.txt
+PyYAML>=6.0,<7.0
+jsonschema>=4.23,<5.0

@@ -39,6 +39,8 @@ temp/
 # Local data and runtime state
 data/
 mlruns/
+artifacts/validation/
+artifacts/test-tmp-*/
 .airflow_local/
 airflow.db
 airflow.cfg

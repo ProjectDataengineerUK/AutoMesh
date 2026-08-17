@@ -30,6 +30,9 @@ x-airflow-common:
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-apache-airflow-providers-apache-kafka apache-airflow-providers-databricks confluent-kafka deltalake pyarrow pyyaml requests anthropic mlflow scikit-learn scipy pandas databricks-sdk msal}
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
     PYTHONPATH: /opt/airflow
+    AIRFLOW__METRICS__OTEL_ON: ${AIRFLOW__METRICS__OTEL_ON:-False}
+    OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-automesh-airflow}
+    OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
     KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
     BRONZE_BASE_PATH: /opt/airflow/data/bronze
     DLQ_TABLE_PATH: /opt/airflow/data/bronze/_dlq/bronze_dlq

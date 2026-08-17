@@ -1,0 +1,28 @@
+name: dagbag
+
+on:
+  pull_request:
+    paths: ["pipelines/**/dags/**", "scripts/validate_dagbag.py", ".github/workflows/dagbag.yml"]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        domain: [ingestion, processing, self_healing, insights, finops, rag, delivery]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Airflow 3 DagBag
+        run: >-
+          docker run --rm
+          -v "${{ github.workspace }}:/workspace"
+          -w /workspace
+          apache/airflow:3.0.0-python3.11
+          python scripts/validate_dagbag.py pipelines/${{ matrix.domain }}/dags

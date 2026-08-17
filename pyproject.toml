@@ -1,6 +1,10 @@
 [tool.pytest.ini_options]
-testpaths = ["pipelines"]
+testpaths = ["pipelines", "tests"]
 addopts = "-ra"
+markers = [
+  "recovery: deterministic recovery scenarios",
+  "external: opt-in external infrastructure probes",
+]
 
 [tool.ruff]
 target-version = "py311"
@@ -8,4 +12,3 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "BLE"]
-
