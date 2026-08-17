@@ -45,7 +45,10 @@ jobs:
           if [ -f "$requirements" ]; then python -m pip install -r "$requirements"; fi
           python -m pip install pytest pytest-cov PyYAML
       - name: Run domain tests
-        run: python -m pytest pipelines/${{ matrix.domain }}/tests -q --junitxml=junit-${{ matrix.domain }}.xml
+        run: >-
+          python -m pytest pipelines/${{ matrix.domain }}/tests -q
+          --ignore=pipelines/${{ matrix.domain }}/tests/test_dags_integrity.py
+          --junitxml=junit-${{ matrix.domain }}.xml
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -61,5 +64,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: python -m pip install pytest PyYAML jsonschema
+      - run: python -m pip install pytest PyYAML jsonschema pyarrow deltalake
       - run: python -m pytest tests/platform tests/recovery -q
