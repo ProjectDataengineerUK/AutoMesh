@@ -9,7 +9,7 @@
 | **Feature** | FASE7_GOLD_BI_DATABRICKS |
 | **Date** | 2026-08-17 |
 | **Author** | define-agent |
-| **Status** | Ready for Design |
+| **Status** | ✅ Complete (Designed) |
 | **Clarity Score** | 14/15 |
 
 ---
@@ -222,4 +222,4 @@ Essas perguntas não bloqueiam o Design local; bloqueiam apenas a publicação e
 
 ## Next Step
 
-**Ready for:** `/design .claude/sdd/features/DEFINE_FASE7_GOLD_BI_DATABRICKS.md`
+**Ready for:** `/build .claude/sdd/features/DESIGN_FASE7_GOLD_BI_DATABRICKS.md`
