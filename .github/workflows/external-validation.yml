@@ -1,0 +1,37 @@
+name: external-validation
+
+on:
+  pull_request:
+    paths: ["pipelines/external_validation/**", "docs/external-validation/**", ".github/workflows/external-validation.yml"]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Local mode; external publish remains separately approved"
+        required: true
+        default: "preflight"
+        type: choice
+        options: [preflight, dry-run]
+
+permissions:
+  contents: read
+
+jobs:
+  local:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install validation dependencies
+        run: python -m pip install pytest ruff
+      - name: Lint external validation
+        run: python -m ruff check pipelines/external_validation
+      - name: Test external validation
+        run: python -m pytest pipelines/external_validation/tests -q -p no:cacheprovider
+      - name: Run local preflight
+        run: python -m pipelines.external_validation.cli --mode preflight
