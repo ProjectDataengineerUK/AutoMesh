@@ -1,0 +1,26 @@
+version: 1
+products:
+  - id: gold_market_insights
+    grain: one row per source class and event date
+    key: source_event_id
+    watermark: event_date
+    required: [source_event_id, event_date, source_class, metric_value]
+    sensitive: []
+  - id: gold_lost_sales
+    grain: one row per sale and event date
+    key: sale_id
+    watermark: event_date
+    required: [sale_id, event_date, region, lost_value]
+    sensitive: [customer_email, customer_name]
+  - id: gold_finops_costs
+    grain: one row per workload and usage date
+    key: usage_id
+    watermark: usage_date
+    required: [usage_id, usage_date, job_name, consumption]
+    sensitive: []
+  - id: gold_platform_health
+    grain: one row per validation event
+    key: event_id
+    watermark: observed_at
+    required: [event_id, observed_at, capability_id, result]
+    sensitive: [raw_message]

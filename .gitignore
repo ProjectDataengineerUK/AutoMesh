@@ -41,6 +41,7 @@ data/
 mlruns/
 artifacts/validation/
 artifacts/test-tmp-*/
+artifacts/gold/
 .airflow_local/
 airflow.db
 airflow.cfg

@@ -1,0 +1,19 @@
+environment: local
+catalog: automesh
+schema: gold
+lookback_days: 2
+freshness_minutes: 15
+publication_timeout_seconds: 300
+products:
+  - id: market_insights
+    key: source_event_id
+    watermark: event_date
+  - id: lost_sales
+    key: sale_id
+    watermark: event_date
+  - id: finops_costs
+    key: usage_id
+    watermark: usage_date
+  - id: platform_health
+    key: event_id
+    watermark: observed_at

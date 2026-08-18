@@ -1,0 +1,30 @@
+version: 1
+metrics:
+  - metric_id: market_total_value
+    owner: analytics
+    grain: source_class, event_date
+    source_product: gold_market_insights
+    formula: sum(metric_value)
+    unit: currency
+    tests: [not_null, non_negative, freshness_15m]
+  - metric_id: lost_sales_value
+    owner: commercial-analytics
+    grain: region, event_date
+    source_product: gold_lost_sales
+    formula: sum(lost_value)
+    unit: currency
+    tests: [not_null, non_negative, freshness_15m]
+  - metric_id: finops_consumption
+    owner: finops
+    grain: job_name, usage_date
+    source_product: gold_finops_costs
+    formula: sum(consumption)
+    unit: credits
+    tests: [not_null, non_negative]
+  - metric_id: platform_quality_failures
+    owner: platform
+    grain: capability_id, observed_at
+    source_product: gold_platform_health
+    formula: count_if(result = 'fail')
+    unit: count
+    tests: [not_null, freshness_15m]

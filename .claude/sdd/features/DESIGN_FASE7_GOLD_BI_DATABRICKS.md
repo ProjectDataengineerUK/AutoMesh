@@ -10,7 +10,7 @@
 | **Date** | 2026-08-17 |
 | **Author** | design-agent |
 | **DEFINE** | [DEFINE_FASE7_GOLD_BI_DATABRICKS.md](./DEFINE_FASE7_GOLD_BI_DATABRICKS.md) |
-| **Status** | Ready for Build |
+| **Status** | ✅ Complete (Built) |
 
 ---
 
@@ -449,4 +449,4 @@ Small fixture tables remain unpartitioned locally. Databricks physical optimizat
 
 ## Next Step
 
-**Ready for:** `/build .claude/sdd/features/DESIGN_FASE7_GOLD_BI_DATABRICKS.md`
+**Ready for:** `/ship .claude/sdd/features/DEFINE_FASE7_GOLD_BI_DATABRICKS.md`

@@ -1,0 +1,11 @@
+{
+  "name": "AutoMesh Operational Health",
+  "source_view": "v_operational",
+  "refresh_minutes": 15,
+  "owner": "platform",
+  "widgets": [
+    {"title": "Capability maturity", "metric": "platform_quality_failures", "visual": "table", "dimension": "capability_id"},
+    {"title": "Freshness", "metric": "gold_refresh_age", "visual": "status", "dimension": "observed_at"},
+    {"title": "Reason codes", "metric": "validation_failures", "visual": "bar", "dimension": "reason_code"}
+  ]
+}

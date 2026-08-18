@@ -1,5 +1,6 @@
 [tool.pytest.ini_options]
 testpaths = ["pipelines", "tests"]
+pythonpath = ["."]
 addopts = "-ra"
 markers = [
   "recovery: deterministic recovery scenarios",

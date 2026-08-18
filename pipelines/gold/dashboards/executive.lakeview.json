@@ -1,0 +1,12 @@
+{
+  "name": "AutoMesh Executive",
+  "source_view": "v_executive",
+  "refresh_minutes": 60,
+  "owner": "analytics",
+  "widgets": [
+    {"title": "Market trend", "metric": "market_total_value", "visual": "line", "dimension": "event_date"},
+    {"title": "Lost sales", "metric": "lost_sales_value", "visual": "bar", "dimension": "region"},
+    {"title": "FinOps consumption", "metric": "finops_consumption", "visual": "line", "dimension": "usage_date"},
+    {"title": "Operational quality", "metric": "platform_quality_failures", "visual": "single_value", "dimension": "event_date"}
+  ]
+}

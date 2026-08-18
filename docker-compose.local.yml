@@ -46,6 +46,10 @@ x-airflow-common:
     MLFLOW_TRACKING_URI: sqlite:////opt/airflow/data/mlflow/mlflow.db
     MLFLOW_MODEL_NAME: main.insights.market_outlier_detector
     DELIVERY_STATE_PATH: /opt/airflow/data/delivery/delivery.db
+    GOLD_ENVIRONMENT: ${GOLD_ENVIRONMENT:-local}
+    GOLD_CATALOG: ${GOLD_CATALOG:-automesh}
+    GOLD_SCHEMA: ${GOLD_SCHEMA:-gold}
+    GOLD_EXTERNAL_ENABLED: ${GOLD_EXTERNAL_ENABLED:-False}
     DELIVERY_REVIEW_RECIPIENT: ${DELIVERY_REVIEW_RECIPIENT:-}
   volumes:
     - ./pipelines/ingestion/dags:/opt/airflow/dags/ingestion
