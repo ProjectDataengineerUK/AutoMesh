@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | **Date** | 2026-08-18 |
-| **Status** | ✅ Complete |
+| **Status** | ✅ Shipped |
 | **Design** | `DESIGN_FASE8_EXTERNAL_VALIDATION.md` |
 
 ## Delivered
@@ -32,4 +32,4 @@ No Databricks workspace was contacted. Live publish remains manual and blocked u
 
 ## Next Step
 
-**Ready for:** `/ship .claude/sdd/features/DESIGN_FASE8_EXTERNAL_VALIDATION.md`
+Shipped and archived on 2026-08-18. Build commit: `902ff32`.

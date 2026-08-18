@@ -9,7 +9,7 @@
 | **Feature** | FASE8_EXTERNAL_VALIDATION |
 | **Date** | 2026-08-18 |
 | **Author** | brainstorm-agent |
-| **Status** | ✅ Complete (Defined) |
+| **Status** | ✅ Shipped |
 
 ## Initial Idea
 
@@ -64,4 +64,4 @@ Adicionar um harness idempotente de validação que consuma os contratos e manif
 
 ## Next Step
 
-**Ready for:** `/define .claude/sdd/features/BRAINSTORM_FASE8_EXTERNAL_VALIDATION.md`
+**Completed:** Shipped and archived on 2026-08-18.

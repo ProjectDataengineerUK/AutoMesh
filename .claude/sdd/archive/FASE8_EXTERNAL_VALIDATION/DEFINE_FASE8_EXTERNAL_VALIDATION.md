@@ -6,7 +6,7 @@
 |---|---|
 | **Feature** | FASE8_EXTERNAL_VALIDATION |
 | **Date** | 2026-08-18 |
-| **Status** | ✅ Complete (Built) |
+| **Status** | ✅ Shipped |
 | **Source** | `BRAINSTORM_FASE8_EXTERNAL_VALIDATION.md` |
 
 ## Objective
@@ -87,7 +87,8 @@ Entregar uma validação externa segura, repetível e opt-in para os artefatos D
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-08-18 | define-agent | Requirements captured from approved Fase 8 brainstorm |
+| 1.1 | 2026-08-18 | ship-agent | Shipped and archived after local validation and CI workflow publication |
 
 ## Next Step
 
-**Ready for:** `/design .claude/sdd/features/DEFINE_FASE8_EXTERNAL_VALIDATION.md`
+**Completed:** Shipped and archived on 2026-08-18.

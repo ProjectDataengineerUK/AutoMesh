@@ -10,7 +10,7 @@
 | **Date** | 2026-08-18 |
 | **Author** | design-agent |
 | **DEFINE** | `DEFINE_FASE8_EXTERNAL_VALIDATION.md` |
-| **Status** | ✅ Complete (Built) |
+| **Status** | ✅ Shipped |
 
 ## Architecture Overview
 
@@ -124,7 +124,8 @@ All AT-001–AT-012 from DEFINE map to tests in `pipelines/external_validation/t
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-08-18 | design-agent | Harness architecture, gate order, adapter and validation strategy |
+| 1.1 | 2026-08-18 | ship-agent | Shipped and archived after local validation and CI workflow publication |
 
 ## Next Step
 
-**Ready for:** `/build .claude/sdd/features/DESIGN_FASE8_EXTERNAL_VALIDATION.md`
+**Completed:** Shipped and archived on 2026-08-18.
