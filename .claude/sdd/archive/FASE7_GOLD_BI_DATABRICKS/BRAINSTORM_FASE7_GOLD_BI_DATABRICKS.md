@@ -9,7 +9,7 @@
 | **Feature** | FASE7_GOLD_BI_DATABRICKS |
 | **Date** | 2026-08-17 |
 | **Author** | brainstorm-agent |
-| **Status** | ✅ Complete (Defined) |
+| **Status** | ✅ Shipped |
 
 ---
 
@@ -250,4 +250,4 @@ Os dados operacionais e de validação existem em vários domínios, mas ainda n
 
 ## Next Step
 
-**Ready for:** `/define .claude/sdd/features/BRAINSTORM_FASE7_GOLD_BI_DATABRICKS.md`
+**Completed:** Shipped and archived on 2026-08-17.

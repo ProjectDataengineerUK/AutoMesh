@@ -9,7 +9,7 @@
 | **Feature** | FASE7_GOLD_BI_DATABRICKS |
 | **Date** | 2026-08-17 |
 | **Author** | define-agent |
-| **Status** | ✅ Complete (Built) |
+| **Status** | ✅ Shipped |
 | **Clarity Score** | 14/15 |
 
 ---
@@ -217,9 +217,10 @@ Essas perguntas não bloqueiam o Design local; bloqueiam apenas a publicação e
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-08-17 | define-agent | Requirements extracted from approved Fase 7 brainstorm |
+| 1.1 | 2026-08-17 | ship-agent | Shipped and archived after all repository CI workflows passed |
 
 ---
 
 ## Next Step
 
-**Ready for:** `/ship .claude/sdd/features/DEFINE_FASE7_GOLD_BI_DATABRICKS.md`
+**Completed:** Shipped and archived on 2026-08-17.

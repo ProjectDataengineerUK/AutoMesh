@@ -11,7 +11,7 @@
 | **Author** | build-agent |
 | **DEFINE** | [DEFINE_FASE7_GOLD_BI_DATABRICKS.md](../features/DEFINE_FASE7_GOLD_BI_DATABRICKS.md) |
 | **DESIGN** | [DESIGN_FASE7_GOLD_BI_DATABRICKS.md](../features/DESIGN_FASE7_GOLD_BI_DATABRICKS.md) |
-| **Status** | Complete |
+| **Status** | ✅ Shipped |
 
 ## Summary
 
@@ -148,7 +148,7 @@ No blocker prevents the local Build. Databricks SQL execution, Unity Catalog per
 
 ## Final Status
 
-### Overall: ✅ COMPLETE
+### Overall: ✅ SHIPPED
 
 - [x] All manifest tasks completed
 - [x] Gold lint and tests pass
@@ -160,4 +160,4 @@ No blocker prevents the local Build. Databricks SQL execution, Unity Catalog per
 
 ## Next Step
 
-`/ship .claude/sdd/features/DEFINE_FASE7_GOLD_BI_DATABRICKS.md`
+Shipped and archived on 2026-08-17. GitHub Actions gates passed on commit `559c937`.
